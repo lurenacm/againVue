@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>父子组件间的传值 props 和 emit()</title>
+    </title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <child :name='initName' @new-name='postName'></child> -->
+        <!-- <child :name.sync='initName'></child> -->
+        <child :name='initName' @update:name='val => this.initName = val'></child>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            initName: '二二'
+        },
+        methods: {
+            postName(val) {
+                this.initName = val
+            }
+        },
+        components: {
+            child: {
+                template: `<div>childName:{{name}}<button @click='changName'>changName</button></div>`,
+                props: {
+                    name: {
+                        type: [String]
+                    }
+                },
+                methods: {
+                    changName() {
+                        this.$emit('update:name', '林一一')
+                    }
+                }
+            }
+        }
+    })
+</script>
+
+</html>

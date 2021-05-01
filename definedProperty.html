@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" id="input" />
+</body>
+<script>
+    var obj = {}
+    var temp = {} // 使用一个临时存放的对象
+    var input = document.getElementById('input')
+    Object.defineProperty(obj, 'name', {
+        get() { // 访问name(属性) 时会被调用 
+            return temp['name']
+        },
+        set(val) { // 给 name (属性) 赋值时会被调用， set属性触发时传入一个参数，val 参数就是赋的值
+            temp['name'] = val
+            input.value = val // 同时给 input 传值
+        }
+        //   value: '林一一',       // 默认是 undefined
+        //   configurable: false,  // 是否可以被删除
+        //   enumerable: false,    // 是否可枚举
+        //   writable: false,      // 属性的值是否可以被修改
+    })
+
+    input.addEventListener('input', function () {
+        console.log(this)
+        obj.name = input.value
+    })
+</script>
+
+</html>

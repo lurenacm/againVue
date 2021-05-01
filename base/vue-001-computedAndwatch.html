@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .classA {
+            font-size: 20px;
+        }
+
+        .classB {
+            background-color: tomato;
+            width: 220px;
+        }
+
+        .classC {
+            position: absolute;
+            background-color: bisque;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div :class="[classA, classB]">
+            <h1>v-bind002</h1>
+        </div>
+        <button v-color='color'>color</button>
+        <div class="classC" v-drag>drag1</div>
+        <!-- <div class="classC" v-drag>drag2</div> -->
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            classA: 'classA',
+            classB: 'classB',
+            color: 'red'
+        },
+        directives: {
+            drag(el, bindings, VNode, X) {
+                console.log(bindings)
+                console.log(VNode)
+                el.onmousedown = function (event) {
+                    let startX = (event.pageX - el.offsetLeft);
+                    let startY = (event.pageY - el.offsetTop);
+                    document.onmousemove = function (event) {
+                        console.log('onmousemove')
+                        el.style.left = event.pageX - startX + 'px'
+                        el.style.top = event.pageY - startY + 'px'
+                    }
+
+                    document.onmouseup = function(){
+                        console.log('onmouseup')
+                        document.onmousemove = document.onmouseup = null
+                    }
+                    event.preventDefault()
+                }
+            },
+            color: function (el, bindings) {
+                el.style.color = bindings.value
+            }
+        }
+        // computed: {
+        //     msg() {
+        //         let note = this.len.length
+        //         return note <=3 ? '用户名过少': (note >=6 ? '用户名过多' : null)
+        //     }
+        // }
+        // watch:{
+        //     len: function(newValue, oldValue) {
+        //         newValue.length <=3 ? this.msg = '用户名过少': (newValue.length >=6? this.msg = '用户名过多' : this.msg = '' )
+        //         // console.log(newValue, oldValue)
+        //     }
+        // }
+    });
+</script>
+
+</html>
