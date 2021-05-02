@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <router-link to="/home" tag="button">首页</router-link>
+        <router-link to="/list" tag="button">列表</router-link>
+        <router-view></router-view>
+    </div>
+</body>
+<template id='child1'>
+    <div>首页</div>
+    <button @click="toLick"></button>
+</template>
+<template id='child2'>
+    <div>列表</div>
+    <button @click="back"></button>
+</template>
+
+<template>
+    <div>
+        首页
+        <router-link to="/home/detail"></router-link>
+        <router-view></router-view>
+    </div>
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router@3.5.1/dist/vue-router.js"></script>
+<script>
+    let home = {
+        template: '#child1',
+        methods: {
+            toList() {
+                this.$router.push('/list')
+            }
+        }
+    }
+    let list = {
+        template: '#child2',
+        back(){
+            this.$router.go(-1)
+        }
+    }
+// 路由表
+    let routes = [{
+            path: '/home',
+            component: home
+        },
+        {
+            path: '/list',
+            component: list
+        }
+    ]
+// 注册路由
+    let router = new VueRouter({
+        routes: routes
+    })
+// 挂载路由
+    let vm = new Vue({
+        el: '#app',
+        router:router
+    })
+</script>
+
+</html>

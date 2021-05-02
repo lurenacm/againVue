@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eventBus同级组件间的传递</title>
+</head>
+<!-- 在子组件 child1 中获取子组件 child2 的数据 -->
+
+<body>
+    <div id="app">
+        <child1></child1>
+        <child2></child2>
+    </div>
+</body>
+<template id='child1'>
+    <div>{{child1}} <button @click='child1Data'>child1</button> </div>
+</template>
+<template id='child2'>
+    <div>{{child2}} <button  >child2</button> </div>
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    let eventBus = new Vue
+    let child1 = {
+        template: '#child1',
+        data() {
+            return {
+                child1: '001child'
+            }
+        },
+        methods: {
+            child1Data(){
+                // 发布事件
+                eventBus.$emit('getChild1Data', this.child1)
+            }
+        }
+    }
+    let child2 = {
+        template: '#child2',
+        data() {
+            return {
+                child2: '002child'
+            }
+        },
+        created() {
+            // 订阅一个事件
+            eventBus.$on('getChild1Data', (val) => {
+                console.log('001child?:',val)
+                this.child2 = val
+            })
+        }
+    }
+
+    let vm = new Vue({
+        el: '#app',
+        components: {
+            child1,
+            child2
+        }
+    })
+</script>
+
+</html>
