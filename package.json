@@ -1,5 +1,5 @@
 {
-  "name": "againVue",
+  "name": "againvue",
   "version": "1.0.0",
   "description": "[Vue base]()",
   "main": "test.js",
@@ -8,5 +8,16 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lurenacm/againVue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lurenacm/againVue/issues"
+  },
+  "homepage": "https://github.com/lurenacm/againVue#readme",
+  "dependencies": {
+    "vue": "^2.6.12"
+  }
 }
