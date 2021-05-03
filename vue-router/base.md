@@ -26,6 +26,7 @@ let list = {
 // 路由列表
 let routes = [{
         path: '/home',
+        redirect: '/home1', // 重定向到 home1 页面
         component: home
     },
     {
@@ -46,6 +47,21 @@ let vm = new Vue({
 ```
 > 上面路由的每一次切换组件都会被销毁 `beforeDestroy()` 钩子都会被执行。在 `vue-cli` 中 `vueRouter` 相当于一个函数插件，vue插件会提供一个 `install` 接口可能是对象也可以是函数，在挂载到 `vue` 实例之前需要先使用 `Vue.use(vueRouter)`，`Vue.use(plugin)` 是将 `<router-view>/<router-link>` 等注册成全局组件 `Vue.component('router-view', view)`。
 
+### 路由的动态绑定
+> 利用 `:to` 动态绑定，同时添加 `name` 属性可以为每一个组件实现切换
+``` js
+<router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
+
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/user/:userId',
+      name: 'user',
+      component: User
+    }
+  ]
+})
+```
 
 ### 路由嵌套
 > 用于不同路由组件之间的嵌套
@@ -110,7 +126,37 @@ watch: {
 }
 ```
 
-
-
+### 路由重定向 redirect 和别名 alias
+* redirect 可以是一个具体的字符串路径，`redirect: '/home'`
+* redirect 也可以是一个具备命名的 `name` 路由对象 `redirect: {name:'home'}`
+* redirect 甚至可以是一个对象，返回需要跳转的页面 `redirect: to => return '/home'`.
+* alias 别名，加入 `/a` 的别名是 '/b'，那么访问 `/b` 时路由匹配到的就是 `/b`，但是显示的还是 `/a` 的页面 
+``` js
+let routes = [{
+        path: '/home',
+        redirect: '/home1', // 重定向到 home1 页面
+        component: home
+    },
+    {
+        path: '/list',
+        redirect: {name:'home'}, // 将页面跳转到 home 组件处
+        component: list
+    },
+    {
+        path: '/a',
+        redirect: to => {
+            // return '/detail'    // 将页面跳转到 detail 页面
+            return {
+                name 'detail'
+            }
+        }, 
+        component: list
+    },{
+        path: '/b',
+        alias: '/c',
+        component: b
+    }
+]
+```
 
 
