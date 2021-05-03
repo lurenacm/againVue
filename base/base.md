@@ -26,6 +26,11 @@ var vm = new Vue({
 ```
 > vm 就是 `view-model` 数据模型层，data：就是vm `view-model` 层所代理的数据。
 
+### Vue 的基本属性
+* `el` 用于获取页面的节点，是 vue 挂载的节点。等价于 `new Vue().$mount('#app')` 写法。
+* 
+
+
 ### Vue 的指令
 > `Vue` 的指令是 `Dom` 上的一个行间属性，类似 `id, style`等
 * `vue` 会忽略掉某些行间属性，例如 `input` 标签的 `value` 属性。
@@ -100,8 +105,6 @@ inserted: function (el) {
 }
 })
  ```
-
-
 
  ##### 实例，实现一个自定义的拖拽指令 v-drag
 ``` js
@@ -227,8 +230,6 @@ Vue.filter('fn', () => {
 
 * 过滤器是一个函数，可以接收到参数，上面 `fn('a', 12)` 就是过滤器函数，闯入的第一个参数是`message` 表达式计算的结果，`a` 是第二个参数
 
-
-
 ### Vue 中的计算属性 computed
 > `{{}}` 虽然也可以写 JS 表达式，但是如果表达式长，代码维护复用都会变得困难。所以 Vue 引入 `computed` 计算属性。
 * `computed` 计算属性，是在监听到数据发生改变后才会重新计算。
@@ -270,7 +271,7 @@ let vm = new Vue({
         arr: [1],
         arr1: [ 1 ,{name:'林一一', age:18}]
     },
-    watch: {    
+    watch: {
         // 浅度监控：观察到 arr 元素值发生变化后，执行下面的方法。
         arr: function(newValue, oldValue) {
             console.log(newValue, oldValue)
@@ -295,6 +296,44 @@ vm.$watch('arr', (newValue, oldValue) => {
 #### 思考：watch 属性和 computed 属性的区别
 > 相同点：两者都可以监听到值发生改变后执行相应的方法，不同：1.`watch` 属性中的方法支持异步的写法，`computed` 属性不支持异步的写法。2. `watch` 监听的属性需要在 `data` 中已经声明，`computed` 声明的属性不能和 `data, methods` 中的属性重名，因为他们都会挂在到同一个属性上。 
 
+
+### 组件模板 template 和 render() 函数
+* template 属性用来定义子组件的节点
+* render(createElement) 函数是一种代替 `template` 的方案，`render` 函数会将虚拟`DOM`渲染成真实的 DOM，`createElement()` 函数会将一个普通的节点对象和 vue 组件渲染后返回虚拟 dom 对象。[render](https://cn.vuejs.org/v2/guide/render-function.html#%E5%9F%BA%E7%A1%80)
+``` js
+<div id="app"></div>
+
+new Vue({
+    el:"#app",
+    render: function(createElement) {
+        return createElement('h3', 'hello') // 创建一个节点 `h3` 内容是 hello 
+    }
+    // render: c => c('h3', 'hello')
+})
+```
+> 上面的 `render` 函数可以将虚拟 `DOM` 渲染挂载到 `id = 'app'` 的位置
+
+
+### Vue.extend(options) 
+> 返回一个 vue 的钩爪函数的子类，`options` 就是 `vue` 这个父类的所有属性，相当于 ES6 中的继承，但是 `data` 必须是一个函数，原因也是`data` 返回的引用地址不能相同。
+``` js
+let V  = Vue.extend({
+    data() {
+        return {
+
+        }
+    },
+    methods: {
+
+    },
+    template: {
+
+    }
+})
+
+let vm = new V
+vm.$mount('#app')
+```
 
 
 

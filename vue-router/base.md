@@ -44,7 +44,7 @@ let vm = new Vue({
     router:router
 })
 ```
-> 上面路由的每一次切换组件都会被销毁 `beforeDestroy()` 钩子都会被执行。
+> 上面路由的每一次切换组件都会被销毁 `beforeDestroy()` 钩子都会被执行。在 `vue-cli` 中 `vueRouter` 相当于一个函数插件，vue插件会提供一个 `install` 接口可能是对象也可以是函数，在挂载到 `vue` 实例之前需要先使用 `Vue.use(vueRouter)`，`Vue.use(plugin)` 是将 `<router-view>/<router-link>` 等注册成全局组件 `Vue.component('router-view', view)`。
 
 
 ### 路由嵌套
