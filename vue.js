@@ -3,6 +3,7 @@
  * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
+
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
@@ -56,8 +57,9 @@
     /**
      * Get the raw type string of a value, e.g., [object Object].
      */
-    var _toString = Object.prototype.toString;
+    var _toString = Object.prototype.toString; //{}.toString
   
+    // 判断类型
     function toRawType (value) {
       return _toString.call(value).slice(8, -1)
     }
