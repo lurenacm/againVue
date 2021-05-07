@@ -14,7 +14,25 @@
 
 ### vue-router 的编程式导航
 > 导航写入在 js 代码中
-* 通过 `this.$router.push('/')` 跳转页面和 `this.$router.go()/back()` 返回指定的页面。
+* 通过 `this.$router.push('/')` 跳转页面和 `this.$router.go()/replace()` 返回指定的页面。
+* `this.$router.push(location, onComplete?, onAbort?)` 会向`history`栈中添加一个新纪录，所以点击浏览器的返回按钮可以让页面返回到上一级
+``` js
+// 字符串
+router.push('home')
+
+// 对象
+router.push({ path: 'home' })
+
+// 命名的路由
+router.push({ name: 'user', params: { userId: '123' }})
+// 等价于声明式导航
+<router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
+
+
+// 带查询参数，变成 /register?plan=private
+router.push({ path: 'register', query: { plan: 'private' }})
+```
+> 当提供一个 `path` 属性时，`params` 属性会被忽略
 
 ``` js
 let home = {
@@ -47,6 +65,11 @@ let vm = new Vue({
 ```
 > 上面路由的每一次切换组件都会被销毁 `beforeDestroy()` 钩子都会被执行。在 `vue-cli` 中 `vueRouter` 相当于一个函数插件，vue插件会提供一个 `install` 接口可能是对象也可以是函数，在挂载到 `vue` 实例之前需要先使用 `Vue.use(vueRouter)`，`Vue.use(plugin)` 是将 `<router-view>/<router-link>` 等注册成全局组件 `Vue.component('router-view', view)`。
 
+### $router 路由器 和 $routes 路由表对象
+* `$router` 是一个路由器可以提供很多方法`go()/back()/`等
+* `$routes` 是一个路由映射表对象提供属性很多路由属性，`params` 来获取动态的参数。
+
+
 ### 路由的动态绑定
 > 利用 `:to` 动态绑定，同时添加 `name` 属性可以为每一个组件实现切换
 ``` js
@@ -78,7 +101,7 @@ const router = new VueRouter({
 </template>
 ```
 ``` js
-let router = [
+let routes = [
     {
         path:'/home',
         component:home,
@@ -89,7 +112,7 @@ let router = [
 ]
 ```
 
-### 携带路由参数
+### 携带路由参数和获取
 * 在 path 路径的后面添加 `/:params` 可以携带任意的参数，例如 `path="/home/:id/:name"` 可以匹配到 `path="/home/1/lyy` 或 `path="/home/2/lee`。
 * 上面的匹配关系在 `vueRouter` 中形成了有一个对象 `{id:1, name:'lyy'}/{id:2, name:'lee'}`，这个对象存放到 `this.$route.params.` 中
 ``` js
@@ -114,7 +137,6 @@ let vm = new Vue({
     router:router
 })
 ```
-
 #### 思考：怎样能知道路径参数的变化，根据页面的参数发送请求？
 * 可以使用对象 `watch` 属性来监控页面路径 `$route` 参数的变化来发送 `ajax`，不能使用 `computed` 的原因是因为，`computed` 不支持异步操作。
 ``` js
@@ -126,11 +148,31 @@ watch: {
 }
 ```
 
+### 路由组件的参数传递
+> 路由组件的传递通过 `props` ，在路由表 `routes` 中设置 `props` 属性接收到
+* `props` 可以是一个布尔值，也可以是一个对象和函数
+``` js
+const User = {
+  props: ['id'],
+  template: '<div>User {{ id }}</div>'
+}
+const router = new VueRouter({
+  routes: [
+    // 布尔值
+    { path: '/user/:id', component: User, props: true },
+    // 对象
+    { path: '/user/:id', component: User, props: {} },
+    // 函数
+    { path: '/user/:id', component: User, props: true },
+  ]
+})
+```
+
 ### 路由重定向 redirect 和别名 alias
 * redirect 可以是一个具体的字符串路径，`redirect: '/home'`
 * redirect 也可以是一个具备命名的 `name` 路由对象 `redirect: {name:'home'}`
-* redirect 甚至可以是一个对象，返回需要跳转的页面 `redirect: to => return '/home'`.
-* alias 别名，加入 `/a` 的别名是 '/b'，那么访问 `/b` 时路由匹配到的就是 `/b`，但是显示的还是 `/a` 的页面 
+* redirect 甚至可以是一个函数，返回需要跳转的页面 `redirect: to => return '/home'`.
+* alias 别名，加入 `/a` 的别名是 `'/b'`，那么访问 `/b` 时路由显示的就是 `/b`，但是页面显示的还是 `/a` 的页面
 ``` js
 let routes = [{
         path: '/home',
