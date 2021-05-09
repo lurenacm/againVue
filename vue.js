@@ -4145,11 +4145,7 @@
     };
   }
 
-  function mountComponent(
-    vm,
-    el,
-    hydrating
-  ) {
+  function mountComponent(vm, el, hydrating) {
     vm.$el = el;
     if (!vm.$options.render) {
       vm.$options.render = createEmptyVNode; {
@@ -9316,10 +9312,7 @@
   Vue.prototype.__patch__ = inBrowser ? patch : noop;
 
   // public mount method
-  Vue.prototype.$mount = function (
-    el,
-    hydrating
-  ) {
+  Vue.prototype.$mount = function (el, hydrating) {
     el = el && inBrowser ? query(el) : undefined;
     return mountComponent(this, el, hydrating)
   };
@@ -12249,10 +12242,7 @@
   });
 
   var mount = Vue.prototype.$mount;
-  Vue.prototype.$mount = function (
-    el,
-    hydrating
-  ) {
+  Vue.prototype.$mount = function (el,hydrating) {
     el = el && query(el);
 
     /* istanbul ignore if */
