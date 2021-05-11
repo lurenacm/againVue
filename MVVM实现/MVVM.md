@@ -106,7 +106,8 @@ function compile(el, mv) {
                 let arr = RegExp.$1.split('.')  // [person, name] [person.age]
                 let obj = mv
                 arr.forEach(key => {
-                    obj = obj[key]
+                // 这里每一次的调用和赋值都会访问一次 Observer 中的get和set
+                    obj = obj[key]      
                 })
 
                 // 替换匹配到的值
@@ -156,10 +157,17 @@ Watcher.prototype.update = function () {
 }
 ```
 * 在数据显示到页面之前，我们就需要订阅这些数据，也就是在 `node.textContent = text.replace(reg, obj)` 之前订阅数据。在数据变化后再显示到页面上
-* 同时在数据变化后是一个新的值，需要对比新旧的值再决定是否替换旧值，那么`Watcher`需要改变一下参数接收方式
+* 同时在数据变化后是一个新的值，
 ``` js
 node.textContent = text.replace(reg, obj)
 ```
+
+### 双向数据绑定 v-model
+> 思路：获取节点后判断行间属性的开头 `v-`，再将节点的 `value` 双向绑定
+``` js
+
+```
+
 
 
 

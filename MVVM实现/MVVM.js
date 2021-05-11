@@ -27,7 +27,6 @@ function compile(el, mv) {
     while (child = mv.$el.firstChild) {
         fragment.appendChild(child)
     }
-    console.log(fragment.childNodes)
     replace(fragment)
 
     function replace(fragment) {
@@ -35,20 +34,34 @@ function compile(el, mv) {
             let text = node.textContent
             // 匹配页面内的 {{}} 后取值插入
             let reg = /\{\{(.*)\}\}/
-            if (reg.test(text)) {
+            if (node.nodeType === 3 && reg.test(text)) {
                 // 在这里深度遍历对象，分割成数组通过实例 mv 插入值
-                let arr = RegExp.$1.split('.')  // [person, name] [person.age]
+                let arr = RegExp.$1.split('.') // [person, name] [person.age]
                 let val = mv
                 arr.forEach(key => {
-                    val = val[key]
+                    val = val[key] // 这里取值的方式就会调用 get方法
                 })
 
-                // 在数据显示前订阅数据
-                new Watcher(mv, RegExp.$1, function(newVal){
+                // 在数据显示前先订阅数据，用来监听数据是否发生变化，用新值替换旧值
+                new Watcher(mv, RegExp.$1, function (newVal) {
+                    console.log('newVal:', newVal)
                     node.textContent = text.replace(reg, newVal)
                 })
                 // 替换匹配到的值
                 node.textContent = text.replace(reg, val)
+            }
+            if (node.nodeType === 1) {
+                let nodeAttrs = node.attributes
+                
+                Array.from(nodeAttrs).forEach(item => {
+                    console.log(item.value)
+                    let name = item.name
+                    let val = item.value
+                    if (name.indexOf('v-') === 0) {
+                        node.value = mv[val]    // 将实例属性值赋予到节点的值
+                    }
+                })
+
             }
             if (node.childNodes) {
                 replace(node)
@@ -61,6 +74,8 @@ function compile(el, mv) {
 
 // 使用递归深度遍历，通过 Observer 遍历 data 对象内的每一个属性，通过 definedProperty() 写入
 function Observer(data) {
+    let dep = new Dep()
+    console.log('Observer', dep)
     for (const key in data) {
         const val = data[key];
         if (!(val instanceof Object)) {
@@ -70,12 +85,14 @@ function Observer(data) {
         Object.defineProperty(data, key, {
             enumerable: true,
             get() {
+                Dep.target && dep.addSub(Dep.target) // [Watcher]
                 return val
             },
             set(newVal) {
                 if (val !== newVal) {
                     val = newVal
                     observer(val)
+                    dep.notify() // 执行订阅队列中的事件
                 }
                 return
             }
@@ -109,15 +126,26 @@ function Watcher(mv, exp, fn) {
     this.mv = mv
     this.exp = exp
     this.fn = fn
-    // 将数据添加到订阅中
+    // 将 watcher 添加到 target 中
     Dep.target = this
-    
+    let val = mv
+    let arr = exp.split('.')
+    arr.forEach(key => {
+        val = val[key] // 调用get和set方法
+    })
+    // 上面的取值每次调用 get 方法后将 Dep.target 清空 
+    Dep.target = null
 }
 
 /** 通过执行 update 方法执行订阅事件 */
 Watcher.prototype.update = function () {
-    this.fn()
-
+    let val = this.mv
+    let arr = this.exp.split('.')
+    arr.forEach(key => {
+        val = val[key] // 调用get方法
+    })
+    console.log(val)
+    this.fn(val)
 }
 
 

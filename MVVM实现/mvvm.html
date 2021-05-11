@@ -12,6 +12,7 @@
         <p>name {{person.name}}</p>
         <span>age {{person.age}}</span>
         <p>num {{num}}</p>
+        <input type="text" v-model="input" />
     </div>
 </body>
 <script src="./MVVM.js"></script>
@@ -23,7 +24,8 @@
                 name: '林一一',
                 age: 18
             },
-            num: 100
+            num: 100,
+            input: 1
         }
     })
     // console.log(mv)
