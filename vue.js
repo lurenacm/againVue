@@ -12247,9 +12247,7 @@
 
     /* istanbul ignore if */
     if (el === document.body || el === document.documentElement) {
-      warn(
-        "Do not mount Vue to <html> or <body> - mount to normal elements instead."
-      );
+      warn("Do not mount Vue to <html> or <body> - mount to normal elements instead.");
       return this
     }
 
