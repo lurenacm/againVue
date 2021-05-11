@@ -2,7 +2,7 @@
 > `MVVM` 也就是双向数据绑定，`vue` 实现 `MVVM` 靠的是数据劫持和发布订阅模式
 
 ### 数据劫持 Observer
-* vue 中的数据劫持需要使用到一个重要属性 `Object.definedProperty(obj, pro, des)`，将`data/methods/props` 等属性遍历到对象内，实现响应式的数据变化。
+* vue 中的数据劫持需要使用到一个重要属性 `Object.definedProperty(obj, pro, des)`，将`data/methods/props` 等属性遍历到对象内，实现监控数据变化。
 ``` js
 var obj = {}
 var temp = {}   // 使用一个临时存放的对象
@@ -87,8 +87,82 @@ function myVue(options = {}) {
 > 模板编译实现就是使用 `{{}}` 可以将数据绑定到页面的效果。`vue template` 标签中的节点都会转化成文档碎片。文档碎片会转变载内存中不会出现在 `DOM` 这样插入的文档碎片不会引起DOM回流 
 * 转化成文档碎片后根据有无 `{{}}` 来插入数据，再将插入后的数据重新显示到页面上。
 ``` js
+// 模板编译实现，template，将el 节点转化成文档碎片 保存在内存中
+function compile(el, mv) {
+    mv.$el = document.querySelector(el)
+    let fragment = document.createDocumentFragment()
+    while (child = mv.$el.firstChild) {
+        fragment.appendChild(child)
+    }
+    replace(fragment)
 
+    function replace(fragment) {
+        Array.from(fragment.childNodes).forEach(node => {
+            let text = node.textContent
+            // 匹配页面内的 {{}} 后取值插入
+            let reg = /\{\{(.*)\}\}/
+            if (reg.test(text)) {
+                // 在这里深度遍历对象，分割成数组通过实例 mv 插入值
+                let arr = RegExp.$1.split('.')  // [person, name] [person.age]
+                let obj = mv
+                arr.forEach(key => {
+                    obj = obj[key]
+                })
+
+                // 替换匹配到的值
+                node.textContent = text.replace(reg, obj)
+            }
+            if (node.childNodes) {
+                replace(node)
+            }
+        });
+    }
+    // 匹配后的数据显示到页面上
+    mv.$el.appendChild(fragment)
+}
 ```
+__效果图[编译前](./img/afterCompile.jpg)[编译后](./img/beforeCompile.jpg)__
+> 上面效果的虽然已经可以匹配编译到 `{{}}`，但是如何做到修改数据让页面的数据也一起变化呢
+
+### 数据和视图关联
+> 思路也很简单，在监控到修改的数据变化后，触发一个事件让页面的数据也跟着变化就好了，这和发布订阅的设计模式就很接近了
+* 简单点说：订阅就是往数组中放入函数，发布就是执行数组中的每一项函数
+[参考文献：]()
+``` js
+function Dep() {
+    this.subs = []
+}
+
+/** 订阅事件：一个将需要发布的事件放入到数组中 */
+Dep.prototype.addSub = function (sub) {
+    this.subs.push(sub)
+}
+
+/** 发布：一个将在数组中订阅的事件依次执行的事件。
+ * update：为了方便执行方法，规定每一个订阅的事件都有一个 update 方法执行函数
+ */
+Dep.prototype.notify = function () {
+    this.subs.forEach(sub => sub.update())
+}
+
+// Watcher 是 实现订阅队列中 [fn1, fn2, fn3] 某一个事件具体行为的容器
+function Watcher(fn) {
+    this.fn = fn
+}
+
+/** 通过执行 update 方法执行订阅事件 */
+Watcher.prototype.update = function () {
+    this.fn()
+}
+```
+* 在数据显示到页面之前，我们就需要订阅这些数据，也就是在 `node.textContent = text.replace(reg, obj)` 之前订阅数据。在数据变化后再显示到页面上
+* 同时在数据变化后是一个新的值，需要对比新旧的值再决定是否替换旧值，那么`Watcher`需要改变一下参数接收方式
+``` js
+node.textContent = text.replace(reg, obj)
+```
+
+
+
 
 
 

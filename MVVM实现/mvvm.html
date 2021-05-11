@@ -9,19 +9,24 @@
 
 <body>
     <div id="app">
-        <p>world {{name}}</p>
-        <span>hello {{age}}</span>
+        <p>name {{person.name}}</p>
+        <span>age {{person.age}}</span>
+        <p>num {{num}}</p>
     </div>
 </body>
 <script src="./MVVM.js"></script>
 <script>
     let mv = new myVue({
-        el:'#app',
+        el: '#app',
         data: {
-            name: '林一一',
-            age: 18
+            person: {
+                name: '林一一',
+                age: 18
+            },
+            num: 100
         }
     })
     // console.log(mv)
 </script>
+
 </html>
