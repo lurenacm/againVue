@@ -1,6 +1,6 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('.')) :
+  typeof define === 'function' && define.amd ? define(['.'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.myVue = factory());
 }(this, (function () { 'use strict';
 
@@ -42,22 +42,71 @@
     return Constructor;
   }
 
-  // 使用 Object.definedProperty 重新给data 属性添加 get/set 实现响应式的变化
+  // 重写数组的 push pop shift unshift reverse sort splice 因为这几个常用方法可以改变原数组
+  /**继承数组的原型，没有重写的方法通过使用原型链上的原方法 */
+
+  var oldArrayMethods = Array.prototype;
+  var arrayMethods = Object.create(oldArrayMethods);
+  var methods = ['push', 'pop', 'shift', 'unshift', 'reverse', 'sort', 'splice'];
+  methods.forEach(function (method) {
+    arrayMethods[method] = function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var res = oldArrayMethods[method].apply(this, args);
+      var instead;
+      var ob = this.__ob__;
+
+      switch (method) {
+        case 'push':
+        case 'unshift':
+          instead = args;
+          break;
+
+        case 'splice':
+          instead = args;
+          break;
+      }
+
+      if (instead) ob.observerArray(instead);
+      return res;
+    };
+  });
 
   /** Observer 就是来添加 get/set 的 class */
+
   var Observer = /*#__PURE__*/function () {
     function Observer(value) {
       _classCallCheck(this, Observer);
 
       // vue 不监控数组的每一项，因为性能消耗很大
       // 通过操作数组的索引转变成操作数组的方法。
-      if (Array.isArray(value)) ; else {
+      Object.defineProperty(value, '__ob__', {
+        enumerable: false,
+        configurable: false,
+        value: this
+      });
+
+      if (Array.isArray(value)) {
+        value.__proto__ = arrayMethods;
+        this.observerArray(value);
+      } else {
         this.walk(value); // 对对象的属性进行添加get/set
       }
-    } // 检测每一步的数据变化
+    } // 监控数组中的每一项实现响应式变化
 
 
     _createClass(Observer, [{
+      key: "observerArray",
+      value: function observerArray(arr) {
+        // arr: [{},{}]
+        arr.forEach(function (item) {
+          observer(item);
+        });
+      } // 检测每一步的数据变化
+
+    }, {
       key: "walk",
       value: function walk(data) {
         var keys = Object.keys(data); //keys = [name, age, attr]
@@ -72,7 +121,6 @@
   }();
 
   function definedReactive(data, key, value) {
-    // 递归实现 对象的数据添加`get/set`
     observer(value);
     Object.defineProperty(data, key, {
       get: function get() {
@@ -86,6 +134,8 @@
       }
     });
   }
+  /** 递归实现 给对象的属性添加`get/set` */
+
 
   function observer(data) {
     if (_typeof(data) === 'object' && data !== null) {

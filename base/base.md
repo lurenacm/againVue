@@ -174,6 +174,7 @@ input.addEventListener('input', function () {
 ### Vue 中的数据响应 get/set
 * data 初始化页面数据的对象，`vue` 会循环遍历 `data` 给 `data` 中的每一个属性都会赋予 `get, set`属性，来支持页面数据的响应式变化，`data` 中声明的变量都需要先初始化，否则不能响应。
 * data 中初始化数组时，使用实例 `vm` 在外部通过改变数组的下标是不能做到响应是变化的，`因为数组的下标不具备 get set方法也就做不到数据响应的变化`，例如 `vm.arr[0] = 100` 或改变数组长度 `vm.arr.length-2` 都不会起作用。
+* vue 通过监控数组的常用方法来实现响应式的变化。
 ``` js
 var vm = new Vue({
     el: '#app',
