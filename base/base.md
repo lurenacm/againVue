@@ -142,6 +142,7 @@ directives: {
 * `v-show` 指令无论条件是否成立都会渲染，但是 `v-if` 在条件不成立的条件下不进行渲染。
 * `template`的标签对 `v-show` 属性失效，使用 `v-if`
 
+
 #### 思考：v-model 实现双向数据绑定的原理
 > vue 的数据绑定原理中使用了一个属性，`Object.definedProperty(obj, pro, des)` 中两个`set get属性`，给一个对象定义属性和属性值
 ``` js
@@ -171,6 +172,7 @@ input.addEventListener('input', function () {
     obj.name = input.value
 })
 ```
+
 ### Vue 中的数据响应 get/set
 * data 初始化页面数据的对象，`vue` 会循环遍历 `data` 给 `data` 中的每一个属性都会赋予 `get, set`属性，来支持页面数据的响应式变化，`data` 中声明的变量都需要先初始化，否则不能响应。
 * data 中初始化数组时，使用实例 `vm` 在外部通过改变数组的下标是不能做到响应是变化的，`因为数组的下标不具备 get set方法也就做不到数据响应的变化`，例如 `vm.arr[0] = 100` 或改变数组长度 `vm.arr.length-2` 都不会起作用。
@@ -190,7 +192,6 @@ var vm = new Vue({
 > 数组的下标0改变成100，但是页面没有发生变化。
 * 使用`vue`实例 vm 给属性`data`添加属性不会有响应式的变化，因为`vue`只处理原本就在`data`上有的属性，通过实例后加的属性不会具备响应式的变化。
 * `vm.$set(target, propertyName/index, value )`：这个方法可以给 `data` 的对象添加响应式的属性和值，例如 `vm.$set(vm.person, 'age', 18)`，给上面的 `data` 属性的 `person` 添加一个响应式的数据 `age=18`。
-
 
 
 #### 思考：data 中初始化一个方法可以吗？

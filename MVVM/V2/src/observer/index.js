@@ -14,6 +14,7 @@ class Observer {
             configurable: false,
             value: this
         })
+
         if (Array.isArray(value)) {
             value.__proto__ = arrayMethods
             this.observerArray(value)
@@ -22,14 +23,14 @@ class Observer {
         }
     }
 
-    // 监控数组中的每一项实现响应式变化
+    // 数组劫持
     observerArray(arr) { // arr: [{},{}]
         arr.forEach(item => {
             observer(item)
         })
     }
 
-    // 检测每一步的数据变化
+    // 对象劫持
     walk(data) {
         let keys = Object.keys(data) //keys = [name, age, attr]
         keys.forEach(key => {

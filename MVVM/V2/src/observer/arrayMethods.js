@@ -2,7 +2,7 @@
 
 import { observerArray } from "./index"
 
-/**继承数组的原型，没有重写的方法通过使用原型链上的原方法 */
+/**继承数组的原型，没有重写的方法使用原型链上的原方法 */
 const oldArrayMethods = Array.prototype
 let arrayMethods = Object.create(oldArrayMethods)
 
@@ -18,7 +18,10 @@ const methods = [
 
 methods.forEach(method => {
     arrayMethods[method] = function (...args) {
-        let res = oldArrayMethods[method].apply(this, args)
+        // this 指向的是 (vm.arrs.push ) arrs 这个数组，
+        // 需要改变 this 指向调用的对象不然 push 没有调用的主体
+        let res = oldArrayMethods[method].call(this, ...args)
+        // console.log('res',res, oldArrayMethods[method](...args))
         let instead;
         let ob = this.__ob__
         switch (method) {
@@ -37,5 +40,8 @@ methods.forEach(method => {
     }
 })
 
+function push() {
+    push()
+}
 
 export {arrayMethods}    

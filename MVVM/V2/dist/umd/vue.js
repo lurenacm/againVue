@@ -43,18 +43,24 @@
   }
 
   // 重写数组的 push pop shift unshift reverse sort splice 因为这几个常用方法可以改变原数组
-  /**继承数组的原型，没有重写的方法通过使用原型链上的原方法 */
+  /**继承数组的原型，没有重写的方法使用原型链上的原方法 */
 
   var oldArrayMethods = Array.prototype;
   var arrayMethods = Object.create(oldArrayMethods);
   var methods = ['push', 'pop', 'shift', 'unshift', 'reverse', 'sort', 'splice'];
   methods.forEach(function (method) {
     arrayMethods[method] = function () {
+      var _oldArrayMethods$meth;
+
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
 
-      var res = oldArrayMethods[method].apply(this, args);
+      // this 指向的是 (vm.arrs.push ) arrs 这个数组，
+      // 需要改变 this 指向调用的对象不然 push 没有调用的主体
+      var res = (_oldArrayMethods$meth = oldArrayMethods[method]).call.apply(_oldArrayMethods$meth, [this].concat(args)); // console.log('res',res, oldArrayMethods[method](...args))
+
+
       var instead;
       var ob = this.__ob__;
 
@@ -94,7 +100,7 @@
       } else {
         this.walk(value); // 对对象的属性进行添加get/set
       }
-    } // 监控数组中的每一项实现响应式变化
+    } // 数组劫持
 
 
     _createClass(Observer, [{
@@ -104,7 +110,7 @@
         arr.forEach(function (item) {
           observer(item);
         });
-      } // 检测每一步的数据变化
+      } // 对象劫持
 
     }, {
       key: "walk",
