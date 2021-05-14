@@ -1,6 +1,6 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('.')) :
-  typeof define === 'function' && define.amd ? define(['.'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.myVue = factory());
 }(this, (function () { 'use strict';
 
@@ -164,10 +164,25 @@
 
   function initData(vm) {
     var data = vm.$options.data;
-    data = vm._data = typeof data === 'function' ? data.call(vm) : data; // console.log('opts', data)
-    //响应式原理 数据劫持：劫持data对象的数据，使用 Object.definedProperty() 添加 get/set 方法
+    data = vm._data = typeof data === 'function' ? data.call(vm) : data; //响应式原理 数据劫持：劫持data对象的数据，使用 Object.definedProperty() 添加 get/set 方法
+    // 改变访问的方式 vm._data. === vm.  做一层代理
+
+    for (var key in data) {
+      proxy(vm, key);
+    }
 
     observer(data);
+  }
+
+  function proxy(vm, key) {
+    Object.defineProperty(vm, key, {
+      get: function get() {
+        return vm['_data'][key];
+      },
+      set: function set(newVal) {
+        return vm['_data'][key] = newVal;
+      }
+    });
   }
 
   function initMixin(myVue) {

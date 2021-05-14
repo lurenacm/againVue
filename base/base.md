@@ -188,7 +188,10 @@ var vm = new Vue({
 ```
 [data的响应原理](./img/data响应原理.jpg)
 > 数组的下标0改变成100，但是页面没有发生变化。
+* 使用`vue`实例 vm 给属性`data`添加属性不会有响应式的变化，因为`vue`只处理原本就在`data`上有的属性，通过实例后加的属性不会具备响应式的变化。
 * `vm.$set(target, propertyName/index, value )`：这个方法可以给 `data` 的对象添加响应式的属性和值，例如 `vm.$set(vm.person, 'age', 18)`，给上面的 `data` 属性的 `person` 添加一个响应式的数据 `age=18`。
+
+
 
 #### 思考：data 中初始化一个方法可以吗？
 > 可以的。`data 和 methods` 可以说是等价的。所以在 `data 和 methods` 中声明同一个变量名会直接报错。`data 和 methods` 声明的的数据都会放入到 `Vue` 实例上，`this` 也都指向 Vue 实例。

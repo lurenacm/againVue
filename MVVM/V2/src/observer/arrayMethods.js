@@ -1,6 +1,6 @@
 // 重写数组的 push pop shift unshift reverse sort splice 因为这几个常用方法可以改变原数组
 
-import { observer } from "."
+import { observerArray } from "./index"
 
 /**继承数组的原型，没有重写的方法通过使用原型链上的原方法 */
 const oldArrayMethods = Array.prototype
