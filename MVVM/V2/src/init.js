@@ -1,4 +1,6 @@
-import {initState} from './state'
+import {
+    initState
+} from './state'
 
 export function initMixin(myVue) {
     // 初始化流程
@@ -9,7 +11,25 @@ export function initMixin(myVue) {
 
         // 初始化数据
         initState(vm)
+
+        // 挂载模板
+        if (this.$options.el) {
+            vm.$mount(el)
+        }
     }
 
+    myVue.prototype.$mount = function (el) {
+        let vm = this
+        let options = vm.$options
+        el = document.querySelector(el)
+        if (!vm.render) {
+            if (!vm.template && el) {
+                let template = el.outerHTML
+                // 将模板 template 编译成虚拟 dom 
+                let render = compileToFunction(template)
+                options.render = render
+            }
+        }
+    }
 
 }

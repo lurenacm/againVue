@@ -200,7 +200,26 @@
       var vm = this;
       this.$options = options; // 初始化数据
 
-      initState(vm);
+      initState(vm); // 挂载模板
+
+      if (this.$options.el) {
+        vm.$mount(el);
+      }
+    };
+
+    myVue.prototype.$mount = function (el) {
+      var vm = this;
+      var options = vm.$options;
+      el = document.querySelector(el);
+
+      if (!vm.render) {
+        if (!vm.template && el) {
+          var template = el.outerHTML; // 将模板 template 编译成虚拟 dom 
+
+          var render = compileToFunction(template);
+          options.render = render;
+        }
+      }
     };
   }
 
