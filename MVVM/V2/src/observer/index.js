@@ -16,7 +16,7 @@ class Observer {
         })
 
         if (Array.isArray(value)) {
-            value.__proto__ = arrayMethods
+            value.__proto__ = arrayMethods 
             this.observerArray(value)
         } else {
             this.walk(value) // 对对象的属性进行添加get/set
@@ -25,9 +25,11 @@ class Observer {
 
     // 数组劫持
     observerArray(arr) { // arr: [{},{}]
+    // 监控数组中的对象和数组类型，再次递归，性能消耗大
         arr.forEach(item => {
             observer(item)
-        })
+        }) 
+        
     }
 
     // 对象劫持

@@ -57,8 +57,9 @@
       }
 
       // this 指向的是 (vm.arrs.push ) arrs 这个数组，
-      // 需要改变 this 指向调用的对象不然 push 没有调用的主体
-      var res = (_oldArrayMethods$meth = oldArrayMethods[method]).call.apply(_oldArrayMethods$meth, [this].concat(args)); // console.log('res',res, oldArrayMethods[method](...args))
+      // 需要添加 this 指向调用的对象不然，原型上的 push 没有调用的主体
+      var res = (_oldArrayMethods$meth = oldArrayMethods[method]).call.apply(_oldArrayMethods$meth, [this].concat(args)); // 为了监控数组添加的数据类型也是一个 object push({}, {}) 
+      // 需要再次进行数组劫持添加 definedPrototype
 
 
       var instead;
@@ -107,6 +108,7 @@
       key: "observerArray",
       value: function observerArray(arr) {
         // arr: [{},{}]
+        // 监控数组中的对象和数组类型，再次递归，性能消耗大
         arr.forEach(function (item) {
           observer(item);
         });
