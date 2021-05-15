@@ -1,6 +1,5 @@
-import {
-    initState
-} from './state'
+import { initState } from './state'
+import {compileToFunction} from './compile/index'
 
 export function initMixin(myVue) {
     // 初始化流程
@@ -14,7 +13,7 @@ export function initMixin(myVue) {
 
         // 挂载模板
         if (this.$options.el) {
-            vm.$mount(el)
+            vm.$mount(this.$options.el)
         }
     }
 
@@ -25,6 +24,7 @@ export function initMixin(myVue) {
         if (!vm.render) {
             if (!vm.template && el) {
                 let template = el.outerHTML
+                // console.log(template)
                 // 将模板 template 编译成虚拟 dom 
                 let render = compileToFunction(template)
                 options.render = render

@@ -193,6 +193,54 @@
     });
   }
 
+  var ncname = "[a-zA-Z_][\\-\\.0-9_a-zA-Z]*";
+  var qnameCapture = "((?:".concat(ncname, "\\:)?").concat(ncname, ")");
+  var startTagOpen = new RegExp("^<".concat(qnameCapture)); // 标签开头的正则 捕获的内容是标签名
+  // example：<div id+"#app">{{msg}}</div>
+  // 模板编译就是处理 {{msg}} 实现的内容。
+
+  function parserHtml(html) {
+    function advance(len) {
+      html = html.substring(len);
+      console.log(html);
+    }
+
+    function parserStartTag(html) {
+      var start = html.match(startTagOpen);
+      console.log(start);
+
+      if (start) {
+        ({
+          tagName: start[1],
+          // 标签名
+          attrs: []
+        });
+        advance(start[0].length);
+      }
+
+      return false;
+    } // 看解析的内容是否存在，存在就不停的解析
+
+
+    while (html) {
+      var textEnd = html.indexOf('<'); // 匹配结束标签的开头
+
+      if (textEnd == 0) {
+        /** 解析开始的标签 */
+        parserStartTag(html);
+        break; // if (startTagMatch) {
+        // }
+        // const endTagMatch = parserEndTag()
+        // if (endTagMatch) {
+        // }
+      }
+    }
+  }
+
+  function compileToFunction(template) {
+    parserHtml(template);
+  }
+
   function initMixin(myVue) {
     // 初始化流程
     myVue.prototype._init = function (options) {
@@ -203,7 +251,7 @@
       initState(vm); // 挂载模板
 
       if (this.$options.el) {
-        vm.$mount(el);
+        vm.$mount(this.$options.el);
       }
     };
 
@@ -214,7 +262,8 @@
 
       if (!vm.render) {
         if (!vm.template && el) {
-          var template = el.outerHTML; // 将模板 template 编译成虚拟 dom 
+          var template = el.outerHTML; // console.log(template)
+          // 将模板 template 编译成虚拟 dom 
 
           var render = compileToFunction(template);
           options.render = render;
