@@ -1,5 +1,7 @@
 import { initState } from './state'
 import {compileToFunction} from './compile/index'
+import { mountComponent } from './lifeCycle'
+
 
 export function initMixin(myVue) {
     // 初始化流程
@@ -30,6 +32,9 @@ export function initMixin(myVue) {
                 options.render = render
             }
         }
+
+        // 组件挂载，new Vue() 就是一个组件，将实例 vm，挂载到 el 上
+        mountComponent(vm, el)
     }
 
 }

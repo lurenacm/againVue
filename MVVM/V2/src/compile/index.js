@@ -4,7 +4,7 @@ import { generate } from './generate';
 
 export function compileToFunction(template) {
    let root =  parseHTML(template);
-   generate(root)
-    // 创建虚拟 dom
-    // render()
+   let code = generate(root)
+   let render = new Function(code)
+   return render
 }

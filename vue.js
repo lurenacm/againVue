@@ -4145,6 +4145,7 @@
     };
   }
 
+  // 组件挂载钩子
   function mountComponent(vm, el, hydrating) {
     vm.$el = el;
     if (!vm.$options.render) {
