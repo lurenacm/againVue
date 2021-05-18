@@ -4,6 +4,8 @@ import {
     arrayMethods
 } from './arrayMethods';
 
+import Dep from './dep';
+
 /** Observer 就是来添加 get/set 的 class */
 class Observer {
     constructor(value) {
@@ -43,8 +45,13 @@ class Observer {
 
 function definedReactive(data, key, value) {
     observer(value)
+    let dep = new Dep()
     Object.defineProperty(data, key, {
         get() {
+            if(Dep.target) {
+                /** 用来记住 Watcher */
+                dep.depend()
+            }
             return value
         },
         set(newValue) {

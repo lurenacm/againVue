@@ -1,6 +1,12 @@
-import { initState } from './state'
-import {compileToFunction} from './compile/index'
-import { mountComponent } from './lifeCycle'
+import {
+    initState
+} from './state'
+import {
+    compileToFunction
+} from './compile/index'
+import {
+    mountComponent
+} from './lifeCycle'
 
 
 export function initMixin(myVue) {
@@ -21,6 +27,7 @@ export function initMixin(myVue) {
 
     myVue.prototype.$mount = function (el) {
         let vm = this
+        vm.$el = el
         let options = vm.$options
         el = document.querySelector(el)
         if (!vm.render) {
