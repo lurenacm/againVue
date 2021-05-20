@@ -5,6 +5,7 @@
 // 那么一个 Watcher 对应多个属性也就是要存放这个 Dep。
 
 import Dep, { pushTarget, popTarget } from "./dep"
+import { queueWatcher } from "./scheduler"
 
 
 /** Watcher 可以有很多个，通过 id 来区分，*/
@@ -34,6 +35,17 @@ class Watcher {
         pushTarget(this)
         this.getter()
         popTarget()
+    }
+
+    /** 多个修改同一个数据，只更新最后一次修改 */
+    update() {
+        this.get()
+        /** 多次调用update 先将 watcher 缓存下来，最后一起更新 */
+        queueWatcher(this)
+    }
+
+    run() {
+        this.get()
     }
 
     addDep() {

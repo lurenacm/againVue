@@ -9,6 +9,10 @@ export function lifeCycleMixin() {
         /** 核心的 diff 算法 */
        vm.$el =  patch(vm.$el, vNode)
     }
+
+    myVue.prototype.$nextTick = function() {
+        
+    }
 }
 
 export function mountComponent(vm, el) {

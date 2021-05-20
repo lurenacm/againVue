@@ -13,7 +13,14 @@ class Dep {
     }
 
     addSubs(watcher) {
+        this.subs.push(watcher)
+    }
 
+    /** 将存放在数组中的方法 watcher 依次执行 */
+    notify() {
+        this.subs.forEach(watcher => {
+            watcher.update()
+        })
     }
 }
 

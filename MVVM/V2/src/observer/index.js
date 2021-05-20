@@ -9,6 +9,7 @@ import Dep from './dep';
 /** Observer 就是来添加 get/set 的 class */
 class Observer {
     constructor(value) {
+        this.dep = new Dep()
         // vue 不监控数组的每一项，因为性能消耗很大
         // 通过操作数组的索引转变成操作数组的方法。
         Object.defineProperty(value, '__ob__', {
@@ -18,7 +19,7 @@ class Observer {
         })
 
         if (Array.isArray(value)) {
-            value.__proto__ = arrayMethods 
+            value.__proto__ = arrayMethods
             this.observerArray(value)
         } else {
             this.walk(value) // 对对象的属性进行添加get/set
@@ -27,11 +28,10 @@ class Observer {
 
     // 数组劫持
     observerArray(arr) { // arr: [{},{}]
-    // 监控数组中的对象和数组类型，再次递归，性能消耗大
+        // 监控数组中的对象和数组类型，再次递归，性能消耗大
         arr.forEach(item => {
             observer(item)
-        }) 
-        
+        })
     }
 
     // 对象劫持
@@ -43,22 +43,42 @@ class Observer {
     }
 }
 
+function dependArr(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        const current = arr[i];
+        current.__ob__ && current.__ob__.dep.depend()
+        if(Array.isArray(current)) {
+            dependArr(current)
+        }
+    }
+}
+
 function definedReactive(data, key, value) {
-    observer(value)
+    let childObj = observer(value)
     let dep = new Dep()
     Object.defineProperty(data, key, {
         get() {
-            if(Dep.target) {
+            if (Dep.target) {
                 /** 用来记住 Watcher */
                 dep.depend()
+                if (childObj) {
+                    childObj.dep.depend()
+                    //对嵌套的数组也添加dep和watcher 
+                    if(Array.isArray(value)){
+                        dependArr(value)
+                    }
+                }
             }
             return value
         },
         set(newValue) {
-            if (newValue === value) return
-            // 这里再次使用递归考虑到属性的赋值可能是一个对象。
-            observer(newValue)
-            value = newValue
+            if (newValue !== value) {
+                // 这里再次使用递归考虑到属性的赋值可能是一个对象。
+                observer(newValue)
+                value = newValue
+            }
+            dep.notify()
+
         }
     })
 }
@@ -68,4 +88,10 @@ export function observer(data) {
     if (typeof data === 'object' && data !== null) {
         return new Observer(data)
     }
+
+    if (data.__ob__) {
+        return data.__ob__
+    }
+
+    return new Observer()
 }
