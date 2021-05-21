@@ -16,7 +16,7 @@ export function initMixin(myVue) {
         const vm = this
         this.$options = options
 
-        // 初始化数据
+        // 初始化数据，包括 data，watch，prop，computed，。。。
         initState(vm)
 
         // 挂载模板

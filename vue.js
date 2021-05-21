@@ -12243,7 +12243,7 @@
   });
 
   var mount = Vue.prototype.$mount;
-  Vue.prototype.$mount = function (el,hydrating) {
+  Vue.prototype.$mount = function (el, hydrating) {
     el = el && query(el);
 
     /* istanbul ignore if */

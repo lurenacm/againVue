@@ -10,4 +10,5 @@ function myVue(options = {}){
 initMixin(myVue)
 renderMixin(myVue)
 lifeCycleMixin(myVue)
+stateMixin(myVue)
 export default myVue

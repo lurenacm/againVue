@@ -250,10 +250,8 @@ Vue.filter('fn', () => {
 computed:{
     msg: {
         get() {
-
         },
         set(val){
-        
         }
     },
     sum() { // sum 属性不需要使用`set`，可直接使用函数形式。
@@ -265,18 +263,40 @@ computed:{
 ### Vue 中的 Watch 观察者属性
 > Watch 是一个对象，用来观察 `data`(现有的) 中某个值的变化执行对应的函数，函数接收两个参数`newValue, oldValue` 代表变化后的值和变化前的值。`watch` 一般一个数据影响多个数据。
 * 观察值的变化，如果值没有发生变化，`Watch` 中的方法就不会执行。
+* `watch` 的属性的写法有很多种(函数，字符串，数组，对象等)，监控的依赖发生变化后，可以执行自定义的方法也可以执行`methods`中的方法。
 * `watch` 默认只能监控 `data` 属性中属性值的一层数据变化，不能深层监控，例如`[ 1 ,{name:'林一一', age:18}]`，可以监控的到数组下标 1 的变化，但是不能监控到`name/age`属性的变化。如果需要深度监控数据变化需要采用对象的表达方式。
 * `watch` 属性中的方法支持异步的写法。
 * `watch` 支持普通函数和对象的写法，对象写法的 `deep: true` 能够监控到对象内部的变化。
-* 可以使用全局的api，`vm.$watch()`
-* 都需要观察值变化的情况下，没有涉及到异步代码可以选择 `computed` 计算属性，涉及到异步的使用 `watch`
+* 可以使用全局的api，`vm.$watch()` 
+* 都需要观察值变化的情况下，没有涉及到异步代码可以选择 `computed` 计算属性，涉及到异步的使用 `watch` 
 ``` js
 let vm = new Vue({
     data: {
+        name: '林一一',
+        obj: {
+            age: 18
+        },
         arr: [1],
         arr1: [ 1 ,{name:'林一一', age:18}]
     },
+    methods: {
+        getName(){
+            return this.obj.age
+        }
+    },
     watch: {
+        name(oldValue, newValue) {
+            console.log()
+        },
+        // 监控 obj.age的变化
+        'obj.age'(oldValue, newValue) {
+
+        },
+        // 执行 methods 中的方法
+        name: 'getName',
+        //还可以写入多个方法
+        name:[function(){}, function(){}],
+
         // 浅度监控：观察到 arr 元素值发生变化后，执行下面的方法。
         arr: function(newValue, oldValue) {
             console.log(newValue, oldValue)
@@ -285,7 +305,6 @@ let vm = new Vue({
         //该回调会在任何被侦听的对象的 property 改变时被调用，不论其被嵌套多深
         arr1: {
             handler(newValue, oldValue) {
-
             },
             deep: true
         }
@@ -299,7 +318,7 @@ vm.$watch('arr', (newValue, oldValue) => {
 ```
 
 #### 思考：watch 属性和 computed 属性的区别
-> 相同点：两者都可以监听到值发生改变后执行相应的方法，不同：1.`watch` 属性中的方法支持异步的写法，`computed` 属性不支持异步的写法。2.`watch` 监听的时现有的数据变化，`computed` 是创建一个受依赖变化的数据。3.`computed` 的属性具有缓存，只有依赖的值发生改变`computed`才会重新计算，`watch` 是观察作用，类试于回调监听，当监听的数据变化的时候回调执行。
+> 相同点：两者都可以监听到值发生改变后执行相应的方法，不同：1.`watch` 属性中的方法支持异步的写法，`computed` 属性不支持异步的写法。2.`watch` 监听的是现有的数据变化，`computed` 是创建一个受依赖变化的数据。3.`computed` 的属性具有缓存，只有依赖的值发生改变 `computed`才会重新计算，`watch` 是观察作用，类试于回调监听，当监听的数据变化的时候回调执行。从使用场景上说，computed 适用一个数据被多个数据影响，而 watch 适用一个数据影响多个数据；
 
 
 ### 组件模板 template 和 render() 函数

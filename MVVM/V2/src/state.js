@@ -2,6 +2,7 @@
 import {
     observer
 } from './observer/index'
+import Watcher from './observer/watcher'
 
 export function initState(vm) {
     let opts = vm.$options
@@ -17,8 +18,16 @@ export function initState(vm) {
     if (opts.computed) {
         initComputed(vm)
     }
+
     if (opts.watch) {
-        initWatch(vm)
+        initWatch(vm, opts.watch)
+    }
+}
+
+export function stateMixin(myVue) {
+    myVue.prototype.$watch = function(key, handler,options={}){
+        options.user = true
+        new Watcher(vm, key, handler, options)
     }
 }
 
@@ -52,6 +61,22 @@ function proxy(vm, key) {
 }
 
 
-function initComputed() {}
+function initComputed(vm) {}
 
-function initWatch() {}
+function initWatch(watch) {
+    for (const key in watch) {
+        const handler = watch[key];
+        // 如果是数组，需要循环遍历依次执行
+        if (Array.isArray(handler)) {
+            for (let i = 0; i <= handler.length; i++) {
+                createWatcher(vm, key, handler[i])
+            }
+        } else {
+            createWatcher(vm, key, handler)
+        }
+    }
+}
+
+function createWatcher(vm, key, handler) {
+    return vm.$watch(key, handler)
+}
