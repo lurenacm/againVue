@@ -6643,6 +6643,7 @@
     }
 
     return function patch(oldVnode, vnode, hydrating, removeOnly) {
+      console.log('oldVnode', oldVnode )
       if (isUndef(vnode)) {
         if (isDef(oldVnode)) {
           invokeDestroyHook(oldVnode);

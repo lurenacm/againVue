@@ -1,5 +1,5 @@
 export function patch(oldVNode, vNode) {
-    // 用虚拟 dom 生成真实的 z
+    // 用虚拟 dom 生成真实的 
     if(oldVNode.nodeType === 1) {
     
         const parentElm = vNode.parentNode  // 获取父节点
