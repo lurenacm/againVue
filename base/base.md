@@ -197,9 +197,8 @@ var vm = new Vue({
 #### 思考：data 中初始化一个方法可以吗？
 > 可以的。`data 和 methods` 可以说是等价的。所以在 `data 和 methods` 中声明同一个变量名会直接报错。`data 和 methods` 声明的的数据都会放入到 `Vue` 实例上，`this` 也都指向 Vue 实例。
 
-
 ### Vue 中的声明周期钩子
-* `created:` 在数据初始化后会被调用，专门用来发送`ajax`
+* `created:` 在数据初始化后会被调用，专门用来发送 `ajax`
 
 
 
