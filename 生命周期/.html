@@ -9,24 +9,20 @@
 
 <body>
     <div id="app">
-        <child></child>
+        {{arr}}
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
     let vm = new Vue({
         el: '#app',
-        mounted() {
-            console.log('parent')
-        },
-        components: {
-            child: {
-                mounted(){
-                    console.log('child')
-                }
-            },
+        data: {
+            arr: [1, 2, 3]
         }
     })
+    let arr = vm.arr
+    vm.$set(arr, 3, '林一一')
+    console.log(vm.arr)
 </script>
 
 </html>
