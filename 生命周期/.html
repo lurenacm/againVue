@@ -10,19 +10,36 @@
 <body>
     <div id="app">
         {{arr}}
+        <component1 ></component1>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
+    let component1 = {
+        template:`<div>component1<slot name="slotComponent2">slot</slot></div>`,
+        mounted() {
+            // console.log(this.$parent)
+            console.log(this.$children)
+        }
+    }
+    
+    let component2 = {
+        template:'<div slot="slotComponent2">component2</div>',
+        mounted() {
+            console.log(this.$parent)
+        }
+    }
+
     let vm = new Vue({
         el: '#app',
         data: {
             arr: [1, 2, 3]
+        },
+        components:{
+            component1,
+            component2
         }
     })
-    let arr = vm.arr
-    vm.$set(arr, 3, '林一一')
-    console.log(vm.arr)
 </script>
 
 </html>
