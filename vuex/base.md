@@ -72,9 +72,9 @@ export default {
 
 
 ### mutations 
-> `mutation` 是 `vuex` 唯一一个可以改变状态的方式
+> `mutations` 是 `vuex` 唯一一个可以改变状态的方式
 * `mutations` 是一个对象，里面注册了控制组件状态的事件
-* `mutations` 接收状态`state`作为事件的第一个参数。
+* `mutations` 接收状态 `state` 作为事件的第一个参数。
 * `mutations` 的触发的唯一方式通过 `commit(fn, params)` 提交注册的事件，组件可以直接提交`mutation` 事件，也可以通过 `action` 提交事件``
 * 每一个 `mutation` 都有一个 `type` 类型，是事件的名称
 * `mutations` 不支持异步操作。因为 `mutation` 触发时回调函数的还没有被调用，那么数据的状态就无法准确知道是不是最新的。
@@ -105,7 +105,7 @@ this.$store.commit('add')
 * `action` 提交的是一个 `mutation` 事件。
 * `action` 支持异步操作
 * `action` 中的每一个函数都可以接收一个 `context` 参数，这个参数和 `store` 实例具备相同的属性和方法，但 `context` 不是实例 `store`
-* `action` 函数通过控制参数`context` 提交一个`mutation`事件。
+* `action` 函数通过控制参数 `context` 提交一个 `mutation` 事件。
 ``` js
 let store = new Vuex.Store({
     state: {
