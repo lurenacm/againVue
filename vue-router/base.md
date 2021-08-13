@@ -4,9 +4,11 @@
 ## vue-router 基本使用
 > vue 中 可以使用 vue-router 配置组件和路由映射，结合 vue.js 可以创建单页面应用
 * `vue-router` 中提供了一个全局组件 `<router-view>` 用来存放路由组件
-* 注册的路由路径，组件 `path/component` 要挂载到 `vuePouter` 的 `routes` 属性上。另外 `path` 属性要加上路径 `/` 表示根路径。可以使用 `path:'/*'` 处理没有匹配到的路径。
+* 注册的路由路径，组件 `path/component` 要挂载到 `vueRouter` 的 `routes` 属性上。另外 `path` 属性要加上路径 `/` 表示根路径。可以使用 `path:'/*'` 处理没有匹配到的路径。
 * 再将 `vuePouter` 的实例挂载到 vue 的 `router` 属性上，形成关联。
 * 代码上线后使用 `history` 定位，`vueRouter` 提供一个 `mode` 属性可以直接修改 `hash/history/abstract`，浏览器默认值: `"hash"`。
+
+
 
 ### vue-router 的声明式导航
 * `vue-router` 中提供一个全局组件 `<router-link to="" tag="">`，属性 `to` 和路由中 `path` 一致，`tag` 默认是 `<a>` 可以指定写入其他类型的节点，同时 `vueRouter` 给 `<router-link>` 内置了个样式名 `router-link-active` 链接激活时使用的 CSS 类名。可以通过`vueRouter`的属性 `linkActiveClass` 对内置的样式名起一个别名。例如 `linkActiveClass='active'`。
@@ -64,6 +66,7 @@ let vm = new Vue({
 })
 ```
 > 上面路由的每一次切换组件都会被销毁 `beforeDestroy()` 钩子都会被执行。在 `vue-cli` 中 `vueRouter` 相当于一个函数插件，vue插件会提供一个 `install` 接口可能是对象也可以是函数，在挂载到 `vue` 实例之前需要先使用 `Vue.use(vueRouter)`，`Vue.use(plugin)` 是将 `<router-view>/<router-link>` 等注册成全局组件 `Vue.component('router-view', view)`。
+
 
 ### $router 路由器 和 $routes 路由表对象
 * `$router` 是一个路由器可以提供很多方法`go()/back()/`等
@@ -137,16 +140,19 @@ let vm = new Vue({
     router:router
 })
 ```
+
 #### 思考：怎样能知道路径参数的变化，根据页面的参数发送请求？
 * 可以使用对象 `watch` 属性来监控页面路径 `$route` 参数的变化来发送 `ajax`，不能使用 `computed` 的原因是因为，`computed` 不支持异步操作。
+
 ``` js
 watch: {
-    $route(newVal, oldVal) {    // $route 是一个路径参数大的对象
+    $route(newVal, oldVal) {    // $route 是一个路径参数的对象
         console.log('...')
         // 一些 ajax 请求。
     }
 }
 ```
+
 
 ### 路由组件的参数传递
 > 路由组件的传递通过 `props` ，在路由表 `routes` 中设置 `props` 属性接收到

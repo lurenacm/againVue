@@ -6,7 +6,7 @@
 * Vuex 是单向的数据流，组件不能直接修改容器中 `state` 的状态(数据)
 * 子组件可以通过派发 `dispatch` 一个动作 `action` 接着提交 `commit 一个 mutation`，最后修改状态 `state`
 * 子组件也可以直接提交 `commit mutation` 让动作执行，组件状态 `state` 发生变化。 
-* 在非严格模式 `strict:false` 允许直接来修改状态`state`，但是一帮都是在严格模式中通过`mutations` 来修改数据。
+* 在非严格模式 `strict:false` 允许直接来修改状态`state`，但是一般都是在严格模式中通过`mutations` 来修改数据。
 
 #### state 和 辅助函数 mapState
 > state 就是组件的数据状态。类似于`vue` 中的`data`属性
